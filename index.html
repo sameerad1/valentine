@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Be My Valentine 💖</title>
+
+<style>
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+  background: #ffe6f0;
+  margin: 0;
+  overflow: hidden;
+}
+
+h1 {
+  color: #ff3366;
+  text-align: center;
+}
+
+.button-container {
+  display: flex;
+  gap: 40px;
+  margin-top: 20px;
+}
+
+button {
+  position: relative;
+  width: 120px;
+  height: 60px;
+  font-size: 18px;
+  border-radius: 15px;
+  border: none;
+  cursor: pointer;
+  background-color: #ff6699;
+  color: white;
+  overflow: hidden;
+}
+
+.eye {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: white;
+  border-radius: 50%;
+  top: 10px;
+}
+
+.eye.left { left: 15px; }
+.eye.right { right: 15px; }
+
+.pupil {
+  width: 8px;
+  height: 8px;
+  background: black;
+  border-radius: 50%;
+  margin: auto;
+  transition: transform 0.1s;
+}
+
+#smallText {
+  font-size: 12px;
+  margin-top: 10px;
+  color: #555;
+  font-style: italic;
+}
+
+.confetti {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  animation: fall 2s linear forwards;
+}
+
+@keyframes fall {
+  from { transform: translateY(0); }
+  to { transform: translateY(100vh); opacity: 0; }
+}
+
+#gif img {
+  width: 280px;
+  border-radius: 20px;
+  margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<h1 id="question">Will you be my Valentine? 💖</h1>
+
+<div class="button-container" id="buttons">
+  <button id="yes">
+    YES
+    <div class="eye left"><div class="pupil"></div></div>
+    <div class="eye right"><div class="pupil"></div></div>
+  </button>
+
+  <button id="no">
+    NO
+    <div class="eye left"><div class="pupil"></div></div>
+    <div class="eye right"><div class="pupil"></div></div>
+  </button>
+</div>
+
+<div id="smallText">👁 they knew you are here</div>
+<div id="gif"></div>
+
+<script>
+const eyes = document.querySelectorAll(".eye");
+const question = document.getElementById("question");
+const buttons = document.getElementById("buttons");
+const gif = document.getElementById("gif");
+
+let noCount = 0;
+
+// Messages that LOOP
+const noTexts = [
+  "Are you sure? 🤨",
+  "Let me ask again… 😅",
+  "That doesn’t feel right 💔",
+  "I’ll wait 😌",
+  "Still asking 💖"
+];
+
+// Eyes follow cursor
+document.addEventListener("mousemove", e => {
+  eyes.forEach(eye => {
+    const rect = eye.getBoundingClientRect();
+    const dx = e.clientX - (rect.left + rect.width / 2);
+    const dy = e.clientY - (rect.top + rect.height / 2);
+    const angle = Math.atan2(dy, dx);
+    eye.querySelector(".pupil").style.transform =
+      `translate(${Math.cos(angle) * 5}px, ${Math.sin(angle) * 5}px)`;
+  });
+});
+
+// NO CLICK → LOOP FOREVER
+document.getElementById("no").onclick = () => {
+  question.textContent = noTexts[noCount % noTexts.length];
+  noCount++;
+};
+
+// YES CLICK → END GAME
+document.getElementById("yes").onclick = () => {
+  question.textContent = "Yay! 💖 You're my Valentine!";
+  buttons.remove();
+  document.getElementById("smallText").remove();
+
+  gif.innerHTML =
+    `<img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3JjM3I4anVydDhoZTRrNjUxbzEybHBnZnN3OHF6NnQ3dzdueDFveSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3rgXBxX4myufzT6N2w/giphy.gif">`;
+
+  // Confetti
+  for (let i = 0; i < 100; i++) {
+    const c = document.createElement("div");
+    c.className = "confetti";
+    c.style.left = Math.random() * window.innerWidth + "px";
+    c.style.top = "0px";
+    c.style.background = `hsl(${Math.random()*360},80%,60%)`;
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 2000);
+  }
+};
+</script>
+
+</body>
+</html>
